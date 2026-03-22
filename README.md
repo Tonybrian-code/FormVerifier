@@ -22,14 +22,15 @@ Built as part of my **Year 3 Bachelor of IT** portfolio at **Multimedia Universi
 ### 🚀 How to Run Locally
 1. **Clone the repo:**
    ```bash
-   git clone [https://github.com/YOUR_USERNAME/FormVerifier.git](https://github.com/YOUR_USERNAME/FormVerifier.git)
-   cd FormVerifier
+  git clone https://github.com/Tonybrian-code/FormVerifier.git   
+
+  cd FormVerifier
 
 2. **Setup Environment:**
 
 python -m venv venv
 .\venv\Scripts\activate
-pip install streamlit pytesseract pillow
+pip install -r requirements.txt
 
 
 3. **Initialize Database:**
