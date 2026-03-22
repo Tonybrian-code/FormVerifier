@@ -3,6 +3,13 @@ from PIL import Image
 import pytesseract
 import re
 import hashlib
+import sqlite3
+import os
+
+
+# Create a 'Session State' to store the national tally
+if 'tally_results' not in st.session_state:
+    st.session_state.tally_results = {'A': 12500, 'B': 11800, 'C': 4500}
 
 # Tesseract Configuration
 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
@@ -13,7 +20,7 @@ st.title("🗳️ Kenya 2027: Form 34A Verifier")
 # --- SIDEBAR: National Statistics ---
 st.sidebar.header("📊 National Tally (Simulated)")
 mock_data = {'Candidate': ['A', 'B', 'C'], 'Votes': [12500, 11800, 4500]}
-st.sidebar.table(mock_data)
+st.sidebar.table(st.session_state.tally_results)
 
 # --- MAIN: Form Upload ---
 uploaded_file = st.file_uploader("Upload Scanned Form 34A (PNG/JPG)", type=["png", "jpg", "jpeg"])
@@ -34,12 +41,60 @@ if uploaded_file:
             st.subheader("Extracted Data")
             st.code(extracted_text)
             
-            # --- VERIFICATION LOGIC ---
-            # Search for "Candidate" followed by any characters and then a number
-            match = re.search(r"Candidate.*?(\d+)", extracted_text)
-            
+            # --- 1. DYNAMIC EXTRACTION LOGIC ---
+            # This Regex looks for "Candidate" followed by ANY character (A, B, C, &, 8) 
+            # and then the numbers
+            # --- 1. CONSOLIDATED FORENSIC EXTRACTION ---
+            # This Regex finds the Candidate identifier and the Vote count
+            match = re.search(r"Candidate.*?(\w|&).*?(\d+)", extracted_text)
+
             if match:
-                votes = match.group(1)
-                st.success(f"✅ Form Verified: recorded {votes} votes.")
-            else:
-                st.error("🚨 Anomaly Detected: Form structure unrecognized or tampered.")
+                raw_candidate = match.group(1) 
+                votes = int(match.group(2)) # Successfully converts the digits to an integer
+                
+                # --- DATA SANITIZATION ---
+                # Maps messy OCR characters back to the correct database keys
+                if raw_candidate in ['A', '&']: 
+                    candidate_key = 'A'
+                elif raw_candidate in ['B', '8']: 
+                    candidate_key = 'B'
+                else: 
+                    candidate_key = 'C'
+        
+                st.success(f"✅ OCR identified {candidate_key} with {votes} votes.")
+
+                # --- 2. DYNAMIC STATION DETECTION ---
+                # Catches PS-002, P-002, or even P 002
+                id_match = re.search(r"P[S]?[- ]?(\d+)", extracted_text)
+                station_id = f"PS-{id_match.group(1)}" if id_match else "PS-001"
+
+                # --- 2. DATABASE AUDIT ---
+                current_dir = os.path.dirname(os.path.abspath(__file__))
+                db_path = os.path.join(current_dir, 'constituency_data.db')
+
+                conn = sqlite3.connect(db_path)
+                c = conn.cursor()
+                c.execute("SELECT expected_voters FROM polling_stations WHERE id=?", (station_id,))
+                result = c.fetchone()
+                conn.close()
+
+                if result:
+                    # Adding takes the number out of the tuple
+                    expected_capacity = result[0]
+                    st.info(f"📋 Database Check: Station {station_id} has a max capacity of {expected_capacity} voters.")
+                    
+                    # --- 3. THE VERDICT ---
+                    if votes > expected_capacity:
+                        st.error(f"🚨 DISCREPANCY: Votes ({votes}) exceed capacity!")
+                    else:
+                        st.success(f"⚖️ Mathematical Validation: {station_id} result is legal.")
+                        
+                        # --- 4. THE LIVE UPDATE ---
+                        # Correctly updates the specific candidate found by the sanitized logic
+                        st.session_state.tally_results[candidate_key] += votes
+                        
+                        st.balloons() 
+                        st.info(f"🗳️ National Tally updated for Candidate {candidate_key}!")
+                        
+                        # Force refresh so sidebar shows the new numbers immediately
+                        st.rerun()
