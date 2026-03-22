@@ -26,21 +26,25 @@ Built as part of my **Year 3 Bachelor of IT** portfolio at **Multimedia Universi
    cd FormVerifier
 
 2. **Setup Environment:**
+
 python -m venv venv
 .\venv\Scripts\activate
 pip install streamlit pytesseract pillow
 
 
+3. **Initialize Database:**
+   
 python seed_db.py
 
 
+4. **Launch App:** 
 streamlit run app.py
 
 
 
 ---
 
-### 🏛️ Engineering Reflection (BIT Portfolio)
+### 🏛️ Engineering Reflection
 The core challenge of this project was managing **"Dirty Data"** produced by the OCR engine. In real-world election scenarios, physical scans are rarely perfect. 
 
 **Key Technical Solutions:**
