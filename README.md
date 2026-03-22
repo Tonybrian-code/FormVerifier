@@ -20,7 +20,7 @@ Built as part of my **Year 3 Bachelor of IT** portfolio at **Multimedia Universi
 * **Security:** Hashlib (SHA-256)
 
 ### 🚀 How to Run Locally
-   1. **Clone the repo:**
+1. **Clone the repo:**
    ```bash
    git clone [https://github.com/Tonybrian-code/FormVerifier.git](https://github.com/Tonybrian-code/FormVerifier.git)
    cd FormVerifier
