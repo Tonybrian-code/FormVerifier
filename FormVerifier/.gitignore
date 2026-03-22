@@ -1,0 +1,14 @@
+# Python virtual environment
+venv/
+.venv/
+env/
+
+# VS Code settings
+.vscode/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# SQLite database (optional - usually you keep seed_db.py instead)
+*.db
