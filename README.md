@@ -29,6 +29,7 @@ Built as part of my **Year 3 Bachelor of IT** portfolio at **Multimedia Universi
 
 python -m venv venv
 .\venv\Scripts\activate
+
 pip install -r requirements.txt
 
 
