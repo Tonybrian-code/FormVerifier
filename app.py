@@ -50,7 +50,7 @@ if uploaded_file:
                 votes = int(match.group(2)) # Successfully converts the digits to an integer
                 
                 # DATA SANITIZATION
-                # Mapping messy OCR characters back to the correct database keys
+                # Map messy OCR characters back to the correct database keys
                 if raw_candidate in ['A', '&']: 
                     candidate_key = 'A'
                 elif raw_candidate in ['B', '8']: 

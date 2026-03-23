@@ -1,7 +1,7 @@
 from PIL import Image, ImageDraw, ImageFont
 
 def create_form(candidate_name, vote_count, filename):
-    # Creating a white "paper"
+    # Create a white "paper"
     img = Image.new('RGB', (500, 300), color=(255, 255, 255))
     d = ImageDraw.Draw(img)
     
@@ -13,6 +13,6 @@ def create_form(candidate_name, vote_count, filename):
     img.save(filename)
     print(f"✅ Created {filename}")
 
-# Generating a few test forms
+# Generate a few test forms
 create_form("Candidate A", "300", "form_station_01.png")
 create_form("Candidate B", "320", "form_station_02.png")
