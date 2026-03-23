@@ -84,7 +84,7 @@ if uploaded_file:
                     else:
                         st.success(f"⚖️ Mathematical Validation: {station_id} result is legal.")
                         
-                        # THE LIVE UPDATE
+                        # LIVE UPDATE
                         # Correctly updates the specific candidate found by the sanitized logic
                         st.session_state.tally_results[candidate_key] += votes
                         
